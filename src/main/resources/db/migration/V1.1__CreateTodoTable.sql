@@ -1,0 +1,5 @@
+CREATE TABLE todo(
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    description VARCHAR(50) NOT NULL,
+    completed BOOLEAN NOT NULL
+);
