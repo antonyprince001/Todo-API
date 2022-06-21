@@ -10,4 +10,8 @@ public class TodoService {
     public List<Todo> findAll() {
         return null;
     }
+
+    public Todo findById(long id) {
+        return null;
+    }
 }

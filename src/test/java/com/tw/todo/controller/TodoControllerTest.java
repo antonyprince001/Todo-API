@@ -2,6 +2,7 @@ package com.tw.todo.controller;
 
 import com.tw.todo.entity.Todo;
 import com.tw.todo.service.TodoService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 class TodoControllerTest {
 
-    @Autowired
-    MockMvc mockMvc;
-
     @MockBean
     private TodoService todoService;
+
+    @Autowired
+    MockMvc mockMvc;
 
     @Test
     void shouldReturnAllTodos() throws Exception {
@@ -44,5 +45,18 @@ class TodoControllerTest {
                 ).andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(status().isOk())
                 .andDo(print());
+    }
+
+    @Test
+    void shouldReturnTodoForId() throws Exception {
+        Todo todo = new Todo("NEEV", false);
+
+        when(todoService.findById(1L)).thenReturn(todo);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/todos/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andExpect(jsonPath("$.description", Matchers.is("NEEV")))
+                .andExpect(jsonPath("$.completed", Matchers.is(false)));
     }
 }
