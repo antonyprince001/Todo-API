@@ -21,8 +21,9 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.postgresql:postgresql:42.3.6'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.7.0'
 }
 
 tasks.named('test') {
