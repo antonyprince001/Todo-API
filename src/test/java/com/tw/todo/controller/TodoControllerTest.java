@@ -1,6 +1,7 @@
 package com.tw.todo.controller;
 
 import com.tw.todo.entity.Todo;
+import com.tw.todo.exception.TodoNotFoundException;
 import com.tw.todo.service.TodoService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ class TodoControllerTest {
     void shouldReturnAllTodos() throws Exception {
         List<Todo> todos = new ArrayList<>();
         todos.add(new Todo("NEEV", false));
-        todos.add(new Todo("TWARAN", false));
+        todos.add(new Todo("TWARAN", true));
 
         when(todoService.findAll()).thenReturn(todos);
 
@@ -48,7 +49,7 @@ class TodoControllerTest {
     }
 
     @Test
-    void shouldReturnTodoForId() throws Exception {
+    void shouldReturnTodoForId() throws Exception, TodoNotFoundException {
         Todo todo = new Todo("NEEV", false);
 
         when(todoService.findById(1L)).thenReturn(todo);
@@ -58,5 +59,13 @@ class TodoControllerTest {
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.description", Matchers.is("NEEV")))
                 .andExpect(jsonPath("$.completed", Matchers.is(false)));
+    }
+
+    @Test
+    void shouldReturnStatus404IfTodoNotFoundForId() throws Exception, TodoNotFoundException {
+        when(todoService.findById(1L)).thenThrow(new TodoNotFoundException());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/todos/1"))
+                .andExpect(status().isNotFound());
     }
 }
