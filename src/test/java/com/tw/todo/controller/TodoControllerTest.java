@@ -1,17 +1,22 @@
 package com.tw.todo.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tw.todo.entity.Todo;
+import com.tw.todo.exception.InvalidTodoException;
 import com.tw.todo.exception.TodoNotFoundException;
 import com.tw.todo.service.TodoService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
@@ -38,7 +43,6 @@ class TodoControllerTest {
         List<Todo> todos = new ArrayList<>();
         todos.add(new Todo("NEEV", false));
         todos.add(new Todo("TWARAN", true));
-
         when(todoService.findAll()).thenReturn(todos);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/todos")
@@ -51,7 +55,6 @@ class TodoControllerTest {
     @Test
     void shouldReturnTodoForId() throws Exception, TodoNotFoundException {
         Todo todo = new Todo("NEEV", false);
-
         when(todoService.findById(1L)).thenReturn(todo);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/todos/1")
@@ -67,5 +70,37 @@ class TodoControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/todos/1"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldCreateATodo() throws Exception, InvalidTodoException {
+        Todo todo = new Todo("NEEV", false);
+        when(todoService.save(ArgumentMatchers.any(Todo.class))).thenReturn(todo);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String todoJSON = objectMapper.writeValueAsString(todo);
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/todos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(todoJSON)
+        );
+
+        result.andExpect(status().isCreated())
+                .andExpect(jsonPath("$.description").value("NEEV"))
+                .andExpect(jsonPath("$.completed").value(false));
+    }
+
+    @Test
+    void shouldNotCreateATodoIfRequestBodyIsNotValid() throws Exception, InvalidTodoException {
+        Todo todo = new Todo(null, false);
+        when(todoService.save(ArgumentMatchers.any(Todo.class))).thenThrow(new InvalidTodoException());
+        ObjectMapper objectMapper = new ObjectMapper();
+        String todoJSON = objectMapper.writeValueAsString(todo);
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/todos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(todoJSON)
+        );
+
+        result.andExpect(status().isBadRequest());
     }
 }

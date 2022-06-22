@@ -1,6 +1,7 @@
 package com.tw.todo.service;
 
 import com.tw.todo.entity.Todo;
+import com.tw.todo.exception.InvalidTodoException;
 import com.tw.todo.exception.TodoNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,10 @@ public class TodoService {
     }
 
     public Todo findById(long id) throws TodoNotFoundException {
+        return null;
+    }
+
+    public Todo save(Todo todo) throws InvalidTodoException {
         return null;
     }
 }
