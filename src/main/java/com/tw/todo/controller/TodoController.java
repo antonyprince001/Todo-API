@@ -36,9 +36,8 @@ public class TodoController {
     public ResponseEntity<Todo> create(@RequestBody Todo todo) {
         try {
             return new ResponseEntity<>(todoService.save(todo), HttpStatus.CREATED);
-        }
-        catch (InvalidTodoException e){
-            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+        } catch (InvalidTodoException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 }

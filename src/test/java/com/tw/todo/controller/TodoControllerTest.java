@@ -45,9 +45,11 @@ class TodoControllerTest {
         todos.add(new Todo("TWARAN", true));
         when(todoService.findAll()).thenReturn(todos);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/todos")
-                        .contentType(MediaType.APPLICATION_JSON)
-                ).andExpect(jsonPath("$", hasSize(2)))
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/todos")
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        result.andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -57,9 +59,11 @@ class TodoControllerTest {
         Todo todo = new Todo("NEEV", false);
         when(todoService.findById(1L)).thenReturn(todo);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/todos/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                ).andExpect(status().isOk())
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/todos/1")
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.description", Matchers.is("NEEV")))
                 .andExpect(jsonPath("$.completed", Matchers.is(false)));
     }
@@ -68,8 +72,9 @@ class TodoControllerTest {
     void shouldReturnStatus404IfTodoNotFoundForId() throws Exception, TodoNotFoundException {
         when(todoService.findById(1L)).thenThrow(new TodoNotFoundException());
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/todos/1"))
-                .andExpect(status().isNotFound());
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/todos/1"));
+
+        result.andExpect(status().isNotFound());
     }
 
     @Test
