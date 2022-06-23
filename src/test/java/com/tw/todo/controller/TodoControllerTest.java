@@ -117,7 +117,7 @@ class TodoControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String bookJSON = objectMapper.writeValueAsString(todo);
 
-        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.put("/books/0")
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.put("/todos/0")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(bookJSON)
         );
@@ -135,7 +135,7 @@ class TodoControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String bookJSON = objectMapper.writeValueAsString(todo);
 
-        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.put("/books/0")
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.put("/todos/0")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(bookJSON)
         );
@@ -151,11 +151,22 @@ class TodoControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String bookJSON = objectMapper.writeValueAsString(todo);
 
-        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.put("/books/0")
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.put("/todos/0")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(bookJSON)
         );
 
         result.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldDeleteATodoById() throws Exception, TodoNotFoundException {
+        Todo todo = new Todo("NEEV", true);
+        when(todoService.deleteById(0L)).thenReturn(todo);
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                .delete("/todos/0"));
+
+        result.andExpect(status().isOk());
     }
 }
