@@ -42,10 +42,14 @@ public class TodoController {
     }
 
     @PutMapping("/books/{id}")
-    public ResponseEntity<Todo> updateBook(@PathVariable("id") Long id, @RequestBody Todo todo) throws TodoNotFoundException, InvalidTodoException {
-        Todo existingTodo = todoService.findById(id);
-        existingTodo.setDescription(todo.getDescription());
-        existingTodo.setCompleted(todo.isCompleted());
-        return new ResponseEntity<>(todoService.save(existingTodo), HttpStatus.OK);
+    public ResponseEntity<Todo> updateBook(@PathVariable("id") Long id, @RequestBody Todo todo) throws InvalidTodoException {
+        try {
+            Todo existingTodo = todoService.findById(id);
+            existingTodo.setDescription(todo.getDescription());
+            existingTodo.setCompleted(todo.isCompleted());
+            return new ResponseEntity<>(todoService.save(existingTodo), HttpStatus.OK);
+        } catch (TodoNotFoundException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
 }
