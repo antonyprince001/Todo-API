@@ -142,4 +142,20 @@ class TodoControllerTest {
 
         result.andExpect(status().isNotFound());
     }
+
+    @Test
+    void shouldNotUpdateATodoIfRequestBodyIsNotValid() throws TodoNotFoundException, InvalidTodoException, Exception {
+        Todo todo = new Todo(null, true);
+        when(todoService.findById(0L)).thenReturn(todo);
+        when(todoService.save(ArgumentMatchers.any(Todo.class))).thenThrow(new InvalidTodoException());
+        ObjectMapper objectMapper = new ObjectMapper();
+        String bookJSON = objectMapper.writeValueAsString(todo);
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.put("/books/0")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(bookJSON)
+        );
+
+        result.andExpect(status().isBadRequest());
+    }
 }

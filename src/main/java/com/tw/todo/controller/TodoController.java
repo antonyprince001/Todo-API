@@ -50,6 +50,8 @@ public class TodoController {
             return new ResponseEntity<>(todoService.save(existingTodo), HttpStatus.OK);
         } catch (TodoNotFoundException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } catch (InvalidTodoException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 }
