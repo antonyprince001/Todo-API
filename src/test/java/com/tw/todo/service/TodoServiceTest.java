@@ -96,7 +96,7 @@ class TodoServiceTest {
     }
 
     @Test
-    void shouldUpdateATodo() throws InvalidTodoException, TodoNotFoundException {
+    void shouldUpdateATodoById() throws InvalidTodoException, TodoNotFoundException {
         todo.setId(id);
         when(todoRepository.findById(id)).thenReturn(Optional.of(todo));
         when(todoRepository.save(todo)).thenReturn(todo);
@@ -123,5 +123,16 @@ class TodoServiceTest {
         assertThrows(InvalidTodoException.class, () -> todoService.updateById(todoOne));
         assertThrows(InvalidTodoException.class, () -> todoService.updateById(todoTwo));
         assertThrows(InvalidTodoException.class, () -> todoService.updateById(todoThree));
+    }
+
+    @Test
+    void shouldDeleteATodoById() throws InvalidTodoException, TodoNotFoundException {
+        todo.setId(id);
+        when(todoRepository.findById(id)).thenReturn(Optional.of(todo));
+
+        Todo savedTodo = todoService.deleteById(id);
+
+        assertThat(savedTodo.getDescription(), is("NEEV"));
+        assertThat(savedTodo.isCompleted(), is(false));
     }
 }

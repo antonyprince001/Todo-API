@@ -36,7 +36,9 @@ public class TodoService {
     }
 
     public Todo deleteById(Long id) throws TodoNotFoundException {
-        return null;
+        Todo todo = this.findById(id);
+        todoRepository.deleteById(id);
+        return todo;
     }
 
     public Todo updateById(Todo todo) throws TodoNotFoundException, InvalidTodoException {
