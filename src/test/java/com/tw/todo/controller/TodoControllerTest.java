@@ -1,6 +1,5 @@
 package com.tw.todo.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tw.todo.entity.Todo;
 import com.tw.todo.exception.InvalidTodoException;
@@ -169,4 +168,15 @@ class TodoControllerTest {
 
         result.andExpect(status().isOk());
     }
+
+    @Test
+    void shouldReturnStatus404IfTodoNotFoundForDelete() throws Exception, TodoNotFoundException {
+        when(todoService.deleteById(0L)).thenThrow(new TodoNotFoundException());
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                .delete("/todos/0"));
+
+        result.andExpect(status().isNotFound());
+    }
+
 }

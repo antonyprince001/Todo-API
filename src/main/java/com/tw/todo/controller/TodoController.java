@@ -42,7 +42,7 @@ public class TodoController {
     }
 
     @PutMapping("/todos/{id}")
-    public ResponseEntity<Todo> updateTodo(@PathVariable("id") Long id, @RequestBody Todo todo) throws InvalidTodoException {
+    public ResponseEntity<Todo> updateTodo(@PathVariable("id") Long id, @RequestBody Todo todo) {
         try {
             Todo existingTodo = todoService.findById(id);
             existingTodo.setDescription(todo.getDescription());
@@ -57,7 +57,11 @@ public class TodoController {
 
     @DeleteMapping("/todos/{id}")
     public ResponseEntity<Todo> deleteTodo(@PathVariable(value = "id") Long id) {
-        return new ResponseEntity<>(todoService.deleteById(id), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(todoService.deleteById(id), HttpStatus.OK);
+        } catch (TodoNotFoundException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
 
 }
