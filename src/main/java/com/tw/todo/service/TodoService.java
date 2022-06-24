@@ -20,14 +20,18 @@ public class TodoService {
     }
 
     public Todo findById(long id) throws TodoNotFoundException {
-        return todoRepository.findById(id).orElse(null);
+        try {
+            return todoRepository.findById(id).orElse(null);
+        } catch (Exception e) {
+            throw new TodoNotFoundException();
+        }
     }
 
     public Todo save(Todo todo) throws InvalidTodoException {
         return null;
     }
 
-    public Todo deleteById(Long id) throws TodoNotFoundException{
+    public Todo deleteById(Long id) throws TodoNotFoundException {
         return null;
     }
 }

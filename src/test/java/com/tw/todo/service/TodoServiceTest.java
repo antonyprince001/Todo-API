@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,5 +54,12 @@ class TodoServiceTest {
 
         assertThat(todoFetched.getDescription(), is("NEEV"));
         assertThat(todoFetched.isCompleted(), is(false));
+    }
+
+    @Test
+    void shouldThrowExceptionIfByTodoNotFoundById() {
+        when(todoRepository.findById(0L)).thenReturn(null);
+
+        assertThrows(TodoNotFoundException.class, () -> todoService.findById(0L));
     }
 }
