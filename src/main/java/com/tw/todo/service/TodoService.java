@@ -7,6 +7,7 @@ import com.tw.todo.repository.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.tree.ExpandVetoException;
 import java.util.List;
 
 @Service
@@ -39,9 +40,15 @@ public class TodoService {
     }
 
     public Todo updateById(Todo todo) throws TodoNotFoundException, InvalidTodoException {
-        Todo updatedTodo = this.findById(todo.getId());
-        updatedTodo.setDescription(todo.getDescription());
-        updatedTodo.setCompleted(todo.isCompleted());
-        return this.save(updatedTodo);
+        try {
+            Todo updatedTodo = this.findById(todo.getId());
+            updatedTodo.setDescription(todo.getDescription());
+            updatedTodo.setCompleted(todo.isCompleted());
+            return this.save(updatedTodo);
+        } catch (TodoNotFoundException e) {
+            throw new TodoNotFoundException();
+        } catch (Exception e) {
+            throw new InvalidTodoException();
+        }
     }
 }

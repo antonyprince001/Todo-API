@@ -38,7 +38,7 @@ class TodoServiceTest {
     @BeforeEach
     void setUp() {
         id = 1L;
-        todo =  new Todo("NEEV", false);
+        todo = new Todo("NEEV", false);
     }
 
     @Test
@@ -85,7 +85,7 @@ class TodoServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionIfTodoToBeSavedInvalid()  {
+    void shouldThrowExceptionIfTodoToBeSavedInvalid() {
         Todo todoOne = new Todo(null, false);
         Todo todoTwo = new Todo("", false);
         Todo todoThree = new Todo("     ", false);
@@ -105,5 +105,23 @@ class TodoServiceTest {
 
         assertThat(savedTodo.getDescription(), is("NEEV"));
         assertThat(savedTodo.isCompleted(), is(false));
+    }
+
+    @Test
+    void shouldThrowExceptionIfTodoToBeUpdatedNotFound() {
+        when(todoRepository.findById(id)).thenReturn(null);
+
+        assertThrows(TodoNotFoundException.class, () -> todoService.updateById(todo));
+    }
+
+    @Test
+    void shouldThrowExceptionIfTodoDataToBeUpdatedInvalid() {
+        Todo todoOne = new Todo(null, false);
+        Todo todoTwo = new Todo("", false);
+        Todo todoThree = new Todo("     ", false);
+
+        assertThrows(InvalidTodoException.class, () -> todoService.updateById(todoOne));
+        assertThrows(InvalidTodoException.class, () -> todoService.updateById(todoTwo));
+        assertThrows(InvalidTodoException.class, () -> todoService.updateById(todoThree));
     }
 }

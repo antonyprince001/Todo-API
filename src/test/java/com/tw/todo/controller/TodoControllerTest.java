@@ -45,7 +45,7 @@ class TodoControllerTest {
     @BeforeEach
     void setUp() {
         id = 1L;
-        todo =  new Todo("NEEV", false);
+        todo = new Todo("NEEV", false);
     }
 
     @Test
