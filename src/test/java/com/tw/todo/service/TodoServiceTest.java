@@ -1,6 +1,7 @@
 package com.tw.todo.service;
 
 import com.tw.todo.entity.Todo;
+import com.tw.todo.exception.InvalidTodoException;
 import com.tw.todo.exception.TodoNotFoundException;
 import com.tw.todo.repository.TodoRepository;
 import org.junit.jupiter.api.Test;
@@ -62,4 +63,16 @@ class TodoServiceTest {
 
         assertThrows(TodoNotFoundException.class, () -> todoService.findById(0L));
     }
+
+    @Test
+    void shouldSaveATodo() throws InvalidTodoException {
+        Todo todo = new Todo("NEEV", false);
+        when(todoRepository.save(todo)).thenReturn(todo);
+
+        Todo savedTodo = todoService.save(todo);
+
+        assertThat(savedTodo.getDescription(), is("NEEV"));
+        assertThat(savedTodo.isCompleted(), is(false));
+    }
+
 }

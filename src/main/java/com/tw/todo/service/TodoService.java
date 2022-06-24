@@ -28,7 +28,7 @@ public class TodoService {
     }
 
     public Todo save(Todo todo) throws InvalidTodoException {
-        return null;
+        return todoRepository.save(todo);
     }
 
     public Todo deleteById(Long id) throws TodoNotFoundException {
