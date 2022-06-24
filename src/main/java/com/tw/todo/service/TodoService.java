@@ -20,7 +20,7 @@ public class TodoService {
     }
 
     public Todo findById(long id) throws TodoNotFoundException {
-        return null;
+        return todoRepository.findById(id).orElse(null);
     }
 
     public Todo save(Todo todo) throws InvalidTodoException {

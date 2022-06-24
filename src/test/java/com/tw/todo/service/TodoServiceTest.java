@@ -1,19 +1,18 @@
 package com.tw.todo.service;
 
 import com.tw.todo.entity.Todo;
+import com.tw.todo.exception.TodoNotFoundException;
 import com.tw.todo.repository.TodoRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -42,5 +41,17 @@ class TodoServiceTest {
         assertThat(fetchedTodos.get(0).isCompleted(), is(false));
         assertThat(fetchedTodos.get(1).getDescription(), is("TWARAN"));
         assertThat(fetchedTodos.get(1).isCompleted(), is(true));
+    }
+
+    @Test
+    void shouldGetTodoById() throws TodoNotFoundException {
+        Todo todo = new Todo("NEEV", false);
+        todo.setId(0L);
+        when(todoRepository.findById(todo.getId())).thenReturn(Optional.of(todo));
+
+        Todo todoFetched = todoService.findById(todo.getId());
+
+        assertThat(todoFetched.getDescription(), is("NEEV"));
+        assertThat(todoFetched.isCompleted(), is(false));
     }
 }
