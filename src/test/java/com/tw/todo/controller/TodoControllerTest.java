@@ -6,6 +6,7 @@ import com.tw.todo.exception.InvalidTodoException;
 import com.tw.todo.exception.TodoNotFoundException;
 import com.tw.todo.service.TodoService;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -37,6 +38,16 @@ class TodoControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    Todo todo;
+
+    long id;
+
+    @BeforeEach
+    void setUp() {
+        id = 1L;
+        todo =  new Todo("NEEV", false);
+    }
+
     @Test
     void shouldReturnAllTodos() throws Exception {
         List<Todo> todos = new ArrayList<>();
@@ -55,8 +66,7 @@ class TodoControllerTest {
 
     @Test
     void shouldReturnTodoForId() throws Exception, TodoNotFoundException {
-        Todo todo = new Todo("NEEV", false);
-        when(todoService.findById(1L)).thenReturn(todo);
+        when(todoService.findById(id)).thenReturn(todo);
 
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/todos/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -69,7 +79,7 @@ class TodoControllerTest {
 
     @Test
     void shouldReturnStatus404IfTodoNotFoundForId() throws Exception, TodoNotFoundException {
-        when(todoService.findById(1L)).thenThrow(new TodoNotFoundException());
+        when(todoService.findById(id)).thenThrow(new TodoNotFoundException());
 
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/todos/1"));
 
@@ -78,7 +88,6 @@ class TodoControllerTest {
 
     @Test
     void shouldCreateATodo() throws Exception, InvalidTodoException {
-        Todo todo = new Todo("NEEV", false);
         when(todoService.save(ArgumentMatchers.any(Todo.class))).thenReturn(todo);
         ObjectMapper objectMapper = new ObjectMapper();
         String todoJSON = objectMapper.writeValueAsString(todo);
@@ -110,7 +119,6 @@ class TodoControllerTest {
 
     @Test
     void shouldUpdateATodo() throws TodoNotFoundException, InvalidTodoException, Exception {
-        Todo todo = new Todo("NEEV", true);
         when(todoService.updateById(ArgumentMatchers.any(Todo.class))).thenReturn(todo);
         ObjectMapper objectMapper = new ObjectMapper();
         String bookJSON = objectMapper.writeValueAsString(todo);
@@ -122,12 +130,11 @@ class TodoControllerTest {
 
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.description").value("NEEV"))
-                .andExpect(jsonPath("$.completed").value(true));
+                .andExpect(jsonPath("$.completed").value(false));
     }
 
     @Test
     void shouldReturnStatus404IfTodoNotFoundForUpdate() throws TodoNotFoundException, InvalidTodoException, Exception {
-        Todo todo = new Todo("NEEV", true);
         when(todoService.updateById(ArgumentMatchers.any(Todo.class))).thenThrow(new TodoNotFoundException());
         ObjectMapper objectMapper = new ObjectMapper();
         String bookJSON = objectMapper.writeValueAsString(todo);
@@ -157,21 +164,20 @@ class TodoControllerTest {
 
     @Test
     void shouldDeleteATodoById() throws Exception, TodoNotFoundException {
-        Todo todo = new Todo("NEEV", true);
-        when(todoService.deleteById(0L)).thenReturn(todo);
+        when(todoService.deleteById(id)).thenReturn(todo);
 
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-                .delete("/todos/0"));
+                .delete("/todos/1"));
 
         result.andExpect(status().isOk());
     }
 
     @Test
     void shouldReturnStatus404IfTodoNotFoundForDelete() throws Exception, TodoNotFoundException {
-        when(todoService.deleteById(0L)).thenThrow(new TodoNotFoundException());
+        when(todoService.deleteById(id)).thenThrow(new TodoNotFoundException());
 
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-                .delete("/todos/0"));
+                .delete("/todos/1"));
 
         result.andExpect(status().isNotFound());
     }

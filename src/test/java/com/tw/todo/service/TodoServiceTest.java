@@ -4,6 +4,7 @@ import com.tw.todo.entity.Todo;
 import com.tw.todo.exception.InvalidTodoException;
 import com.tw.todo.exception.TodoNotFoundException;
 import com.tw.todo.repository.TodoRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,6 +31,16 @@ class TodoServiceTest {
     @InjectMocks
     private TodoService todoService;
 
+    Todo todo;
+
+    long id;
+
+    @BeforeEach
+    void setUp() {
+        id = 1L;
+        todo =  new Todo("NEEV", false);
+    }
+
     @Test
     void shouldGetAllTodos() {
         List<Todo> todos = new ArrayList<>();
@@ -47,9 +58,8 @@ class TodoServiceTest {
 
     @Test
     void shouldGetTodoById() throws TodoNotFoundException {
-        Todo todo = new Todo("NEEV", false);
-        todo.setId(0L);
-        when(todoRepository.findById(todo.getId())).thenReturn(Optional.of(todo));
+        todo.setId(id);
+        when(todoRepository.findById(id)).thenReturn(Optional.of(todo));
 
         Todo todoFetched = todoService.findById(todo.getId());
 
@@ -59,14 +69,13 @@ class TodoServiceTest {
 
     @Test
     void shouldThrowExceptionIfByTodoNotFoundById() {
-        when(todoRepository.findById(0L)).thenReturn(null);
+        when(todoRepository.findById(id)).thenReturn(null);
 
         assertThrows(TodoNotFoundException.class, () -> todoService.findById(0L));
     }
 
     @Test
     void shouldSaveATodo() throws InvalidTodoException {
-        Todo todo = new Todo("NEEV", false);
         when(todoRepository.save(todo)).thenReturn(todo);
 
         Todo savedTodo = todoService.save(todo);
@@ -88,8 +97,6 @@ class TodoServiceTest {
 
     @Test
     void shouldUpdateATodo() throws InvalidTodoException, TodoNotFoundException {
-        long id = 0L;
-        Todo todo = new Todo("NEEV", false);
         todo.setId(id);
         when(todoRepository.findById(id)).thenReturn(Optional.of(todo));
         when(todoRepository.save(todo)).thenReturn(todo);
