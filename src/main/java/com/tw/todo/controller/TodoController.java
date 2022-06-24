@@ -44,10 +44,8 @@ public class TodoController {
     @PutMapping("/todos/{id}")
     public ResponseEntity<Todo> updateTodo(@PathVariable("id") Long id, @RequestBody Todo todo) {
         try {
-            Todo existingTodo = todoService.findById(id);
-            existingTodo.setDescription(todo.getDescription());
-            existingTodo.setCompleted(todo.isCompleted());
-            return new ResponseEntity<>(todoService.save(existingTodo), HttpStatus.OK);
+            todo.setId(id);
+            return new ResponseEntity<>(todoService.updateById(todo), HttpStatus.OK);
         } catch (TodoNotFoundException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } catch (InvalidTodoException e) {

@@ -37,4 +37,8 @@ public class TodoService {
     public Todo deleteById(Long id) throws TodoNotFoundException {
         return null;
     }
+
+    public Todo updateById(Todo todo) throws TodoNotFoundException, InvalidTodoException {
+        return null;
+    }
 }
