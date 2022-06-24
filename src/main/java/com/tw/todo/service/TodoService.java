@@ -28,6 +28,9 @@ public class TodoService {
     }
 
     public Todo save(Todo todo) throws InvalidTodoException {
+        if (todo.getDescription() == null || todo.getDescription().isBlank()) {
+            throw new InvalidTodoException();
+        }
         return todoRepository.save(todo);
     }
 

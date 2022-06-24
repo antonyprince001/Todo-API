@@ -75,4 +75,15 @@ class TodoServiceTest {
         assertThat(savedTodo.isCompleted(), is(false));
     }
 
+    @Test
+    void shouldThrowExceptionIfTodoToBeSavedInvalid()  {
+        Todo todoOne = new Todo(null, false);
+        Todo todoTwo = new Todo("", false);
+        Todo todoThree = new Todo("     ", false);
+
+        assertThrows(InvalidTodoException.class, () -> todoService.save(todoOne));
+        assertThrows(InvalidTodoException.class, () -> todoService.save(todoTwo));
+        assertThrows(InvalidTodoException.class, () -> todoService.save(todoThree));
+
+    }
 }
