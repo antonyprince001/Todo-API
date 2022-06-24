@@ -126,13 +126,21 @@ class TodoServiceTest {
     }
 
     @Test
-    void shouldDeleteATodoById() throws InvalidTodoException, TodoNotFoundException {
+    void shouldDeleteATodoById() throws TodoNotFoundException {
         todo.setId(id);
         when(todoRepository.findById(id)).thenReturn(Optional.of(todo));
 
-        Todo savedTodo = todoService.deleteById(id);
+        Todo deletedTodo = todoService.deleteById(id);
 
-        assertThat(savedTodo.getDescription(), is("NEEV"));
-        assertThat(savedTodo.isCompleted(), is(false));
+        assertThat(deletedTodo.getDescription(), is("NEEV"));
+        assertThat(deletedTodo.isCompleted(), is(false));
+    }
+
+    @Test
+    void shouldThrowExceptionIfTodoToBeDeletedNotFound() {
+        todo.setId(id);
+        when(todoRepository.findById(id)).thenReturn(null);
+
+        assertThrows(TodoNotFoundException.class, () -> todoService.deleteById(id));
     }
 }
