@@ -84,6 +84,19 @@ class TodoServiceTest {
         assertThrows(InvalidTodoException.class, () -> todoService.save(todoOne));
         assertThrows(InvalidTodoException.class, () -> todoService.save(todoTwo));
         assertThrows(InvalidTodoException.class, () -> todoService.save(todoThree));
+    }
 
+    @Test
+    void shouldUpdateATodo() throws InvalidTodoException, TodoNotFoundException {
+        long id = 0L;
+        Todo todo = new Todo("NEEV", false);
+        todo.setId(id);
+        when(todoRepository.findById(id)).thenReturn(Optional.of(todo));
+        when(todoRepository.save(todo)).thenReturn(todo);
+
+        Todo savedTodo = todoService.updateById(todo);
+
+        assertThat(savedTodo.getDescription(), is("NEEV"));
+        assertThat(savedTodo.isCompleted(), is(false));
     }
 }

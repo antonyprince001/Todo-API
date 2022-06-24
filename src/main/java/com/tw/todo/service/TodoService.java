@@ -39,6 +39,9 @@ public class TodoService {
     }
 
     public Todo updateById(Todo todo) throws TodoNotFoundException, InvalidTodoException {
-        return null;
+        Todo updatedTodo = this.findById(todo.getId());
+        updatedTodo.setDescription(todo.getDescription());
+        updatedTodo.setCompleted(todo.isCompleted());
+        return this.save(updatedTodo);
     }
 }
