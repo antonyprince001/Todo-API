@@ -1,6 +1,7 @@
 package com.tw.todo.repository;
 
 import com.tw.todo.entity.Todo;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -20,10 +21,15 @@ public class TodoRepositoryTest {
     @Autowired
     private TodoRepository todoRepository;
 
+    Todo todo;
+
+    @BeforeEach
+    void setUp() {
+        todo = new Todo("NEEV", false);
+    }
+
     @Test
     void shouldSaveATodo() {
-        Todo todo = new Todo("NEEV", false);
-
         Todo savedTodo = todoRepository.save(todo);
 
         assertThat(savedTodo.getDescription(), is("NEEV"));
@@ -47,7 +53,6 @@ public class TodoRepositoryTest {
 
     @Test
     void shouldFetchATodoById() {
-        Todo todo = new Todo("NEEV", false);
         Todo savedTodo = todoRepository.save(todo);
 
         Todo fetchedTodo = todoRepository.findById(savedTodo.getId()).get();
@@ -57,12 +62,16 @@ public class TodoRepositoryTest {
     }
 
     @Test
+    void shouldThrowExceptionIfTodoNotFoundForId() {
+        assertThrows(NoSuchElementException.class, () -> todoRepository.findById(0L).get());
+    }
+
+    @Test
     void shouldDeleteATodoById() {
-        Todo todo = new Todo("NEEV", false);
         Todo savedTodo = todoRepository.save(todo);
 
         todoRepository.deleteById(savedTodo.getId());
 
-        assertThrows(NoSuchElementException.class, ()->todoRepository.findById(savedTodo.getId()).get());
+        assertThrows(NoSuchElementException.class, () -> todoRepository.findById(savedTodo.getId()).get());
     }
 }
