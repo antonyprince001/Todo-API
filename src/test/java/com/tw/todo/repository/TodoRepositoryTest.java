@@ -42,4 +42,15 @@ public class TodoRepositoryTest {
         assertThat(fetchedTodos.get(1).getDescription(), is("TWARAN"));
         assertThat(fetchedTodos.get(1).isCompleted(), is(true));
     }
+
+    @Test
+    void shouldFetchATodoById() {
+        Todo todo = new Todo("NEEV", false);
+        Todo savedTodo = todoRepository.save(todo);
+
+        Todo fetchedTodo = todoRepository.findById(savedTodo.getId()).get();
+
+        assertThat(fetchedTodo.getDescription(), is("NEEV"));
+        assertThat(fetchedTodo.isCompleted(), is(false));
+    }
 }
