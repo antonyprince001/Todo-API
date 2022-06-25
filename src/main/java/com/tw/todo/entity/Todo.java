@@ -20,6 +20,10 @@ public class Todo {
         this.completed = completed;
     }
 
+    public Todo(){
+        super();
+    }
+
     public long getId() {
         return id;
     }
