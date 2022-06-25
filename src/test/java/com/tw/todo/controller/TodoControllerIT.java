@@ -1,8 +1,10 @@
 package com.tw.todo.controller;
 
 import com.tw.todo.entity.Todo;
+import com.tw.todo.exception.TodoNotFoundException;
 import com.tw.todo.repository.TodoRepository;
 import com.tw.todo.service.TodoService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,4 +62,17 @@ public class TodoControllerIT {
                 .andDo(print());
     }
 
+    @Test
+    public void shouldGetTodoForId() throws Exception, TodoNotFoundException {
+        Todo todo = new Todo("NEEV",false);
+        Todo savedTodo = todoRepository.save(todo);
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/todos/"+savedTodo.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.description", Matchers.is("NEEV")))
+                .andExpect(jsonPath("$.completed", Matchers.is(false)));
+    }
 }
