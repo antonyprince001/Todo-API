@@ -7,9 +7,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -52,5 +54,15 @@ public class TodoRepositoryTest {
 
         assertThat(fetchedTodo.getDescription(), is("NEEV"));
         assertThat(fetchedTodo.isCompleted(), is(false));
+    }
+
+    @Test
+    void shouldDeleteATodoById() {
+        Todo todo = new Todo("NEEV", false);
+        Todo savedTodo = todoRepository.save(todo);
+
+        todoRepository.deleteById(savedTodo.getId());
+
+        assertThrows(NoSuchElementException.class, ()->todoRepository.findById(savedTodo.getId()).get());
     }
 }
