@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -74,4 +75,10 @@ public class TodoRepositoryTest {
 
         assertThrows(NoSuchElementException.class, () -> todoRepository.findById(savedTodo.getId()).get());
     }
+
+    @Test
+    void shouldThrowExceptionIfTodoNotFoundForIdToBeDeleted() {
+        assertThrows(EmptyResultDataAccessException.class, () -> todoRepository.deleteById(0L));
+    }
+
 }
