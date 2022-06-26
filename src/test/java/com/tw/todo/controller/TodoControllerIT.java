@@ -94,19 +94,6 @@ public class TodoControllerIT {
     }
 
     @Test
-    void shouldNotCreateATodoIfRequestBodyInvalid() throws Exception, InvalidTodoException {
-        Todo todo = new Todo(null, false);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String todoJSON = objectMapper.writeValueAsString(todo);
-
-        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/todos")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(todoJSON)
-        );
-
-        result.andExpect(status().isBadRequest());
-    }
-    @Test
     void shouldCreateATodo() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         String todoJSON = objectMapper.writeValueAsString(todo);
@@ -119,6 +106,20 @@ public class TodoControllerIT {
         result.andExpect(status().isCreated())
                 .andExpect(jsonPath("$.description").value("NEEV"))
                 .andExpect(jsonPath("$.completed").value(false));
+    }
+
+    @Test
+    void shouldNotCreateATodoIfRequestBodyInvalid() throws Exception, InvalidTodoException {
+        Todo todo = new Todo(null, false);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String todoJSON = objectMapper.writeValueAsString(todo);
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/todos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(todoJSON)
+        );
+
+        result.andExpect(status().isBadRequest());
     }
 
     @Test
@@ -136,6 +137,34 @@ public class TodoControllerIT {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.description").value("NEEV"))
                 .andExpect(jsonPath("$.completed").value(true));
+    }
+
+    @Test
+    void shouldReturnStatus404IfTodoNotFoundForUpdate() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String bookJSON = objectMapper.writeValueAsString(todo);
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.put("/todos/0")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(bookJSON)
+        );
+
+        result.andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldNotUpdateATodoIfRequestBodyIsNotValid() throws  Exception {
+        todo.setDescription("   ");
+        Todo savedTodo = todoRepository.save(todo);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String bookJSON = objectMapper.writeValueAsString(todo);
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.put("/todos/"+savedTodo.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(bookJSON)
+        );
+
+        result.andExpect(status().isBadRequest());
     }
 
     @Test
