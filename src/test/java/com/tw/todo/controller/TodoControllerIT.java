@@ -2,34 +2,19 @@ package com.tw.todo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tw.todo.entity.Todo;
-import com.tw.todo.exception.InvalidTodoException;
-import com.tw.todo.exception.TodoNotFoundException;
 import com.tw.todo.repository.TodoRepository;
-import com.tw.todo.service.TodoService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -69,7 +54,7 @@ public class TodoControllerIT {
     }
 
     @Test
-    public void shouldGetTodoForId() throws Exception, TodoNotFoundException {
+    public void shouldGetTodoForId() throws Exception {
         Todo savedTodo = todoRepository.save(todo);
 
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/todos/" + savedTodo.getId())
@@ -82,7 +67,7 @@ public class TodoControllerIT {
     }
 
     @Test
-    void shouldCreateATodo() throws Exception, InvalidTodoException {
+    void shouldCreateATodo() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         String todoJSON = objectMapper.writeValueAsString(todo);
 
@@ -97,7 +82,7 @@ public class TodoControllerIT {
     }
 
     @Test
-    void shouldUpdateATodo() throws TodoNotFoundException, InvalidTodoException, Exception {
+    void shouldUpdateATodo() throws Exception {
         Todo savedTodo = todoRepository.save(todo);
         todo.setCompleted(true);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -111,5 +96,15 @@ public class TodoControllerIT {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.description").value("NEEV"))
                 .andExpect(jsonPath("$.completed").value(true));
+    }
+
+    @Test
+    void shouldDeleteATodoById() throws Exception {
+        Todo savedTodo = todoRepository.save(todo);
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                .delete("/todos/"+savedTodo.getId()));
+
+        result.andExpect(status().isOk());
     }
 }
