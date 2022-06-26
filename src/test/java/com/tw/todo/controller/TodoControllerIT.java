@@ -59,6 +59,17 @@ public class TodoControllerIT {
     }
 
     @Test
+    public void shouldHandleIfNoTodosFound() throws Exception {
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/todos")
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        result.andExpect(jsonPath("$", hasSize(0)))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
     public void shouldGetTodoForId() throws Exception {
         Todo savedTodo = todoRepository.save(todo);
 
