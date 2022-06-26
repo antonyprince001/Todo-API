@@ -2,12 +2,14 @@ package com.tw.todo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tw.todo.entity.Todo;
+import com.tw.todo.exception.InvalidTodoException;
 import com.tw.todo.exception.TodoNotFoundException;
 import com.tw.todo.repository.TodoRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -91,6 +93,19 @@ public class TodoControllerIT {
         result.andExpect(status().isNotFound());
     }
 
+    @Test
+    void shouldNotCreateATodoIfRequestBodyInvalid() throws Exception, InvalidTodoException {
+        Todo todo = new Todo(null, false);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String todoJSON = objectMapper.writeValueAsString(todo);
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/todos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(todoJSON)
+        );
+
+        result.andExpect(status().isBadRequest());
+    }
     @Test
     void shouldCreateATodo() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
