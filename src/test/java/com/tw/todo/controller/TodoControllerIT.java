@@ -1,12 +1,15 @@
 package com.tw.todo.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tw.todo.entity.Todo;
+import com.tw.todo.exception.InvalidTodoException;
 import com.tw.todo.exception.TodoNotFoundException;
 import com.tw.todo.repository.TodoRepository;
 import com.tw.todo.service.TodoService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,8 +44,11 @@ public class TodoControllerIT {
     @Autowired
     MockMvc mockMvc;
 
+    private Todo todo;
+
     @BeforeEach
     void setUp() {
+        todo = new Todo("NEEV",false);
         todoRepository.deleteAll();
     }
 
@@ -64,7 +70,6 @@ public class TodoControllerIT {
 
     @Test
     public void shouldGetTodoForId() throws Exception, TodoNotFoundException {
-        Todo todo = new Todo("NEEV",false);
         Todo savedTodo = todoRepository.save(todo);
 
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/todos/"+savedTodo.getId())
@@ -74,5 +79,20 @@ public class TodoControllerIT {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.description", Matchers.is("NEEV")))
                 .andExpect(jsonPath("$.completed", Matchers.is(false)));
+    }
+
+    @Test
+    void shouldCreateATodo() throws Exception, InvalidTodoException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String todoJSON = objectMapper.writeValueAsString(todo);
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/todos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(todoJSON)
+        );
+
+        result.andExpect(status().isCreated())
+                .andExpect(jsonPath("$.description").value("NEEV"))
+                .andExpect(jsonPath("$.completed").value(false));
     }
 }
