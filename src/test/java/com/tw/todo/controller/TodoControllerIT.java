@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tw.todo.entity.Todo;
 import com.tw.todo.repository.TodoRepository;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,10 @@ public class TodoControllerIT {
     @BeforeEach
     void setUp() {
         todo = new Todo("NEEV", false);
+    }
+
+    @AfterEach
+    void tearDown() {
         todoRepository.deleteAll();
     }
 
@@ -88,7 +93,7 @@ public class TodoControllerIT {
         ObjectMapper objectMapper = new ObjectMapper();
         String todoJSON = objectMapper.writeValueAsString(todo);
 
-        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.put("/todos/"+savedTodo.getId())
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.put("/todos/" + savedTodo.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(todoJSON)
         );
@@ -103,7 +108,7 @@ public class TodoControllerIT {
         Todo savedTodo = todoRepository.save(todo);
 
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-                .delete("/todos/"+savedTodo.getId()));
+                .delete("/todos/" + savedTodo.getId()));
 
         result.andExpect(status().isOk());
     }
