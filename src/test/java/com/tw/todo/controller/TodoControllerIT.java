@@ -2,6 +2,7 @@ package com.tw.todo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tw.todo.entity.Todo;
+import com.tw.todo.exception.TodoNotFoundException;
 import com.tw.todo.repository.TodoRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -80,6 +82,13 @@ public class TodoControllerIT {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.description", Matchers.is("NEEV")))
                 .andExpect(jsonPath("$.completed", Matchers.is(false)));
+    }
+
+    @Test
+    void shouldReturnStatus404IfTodoNotFoundForId() throws Exception, TodoNotFoundException {
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/todos/1"));
+
+        result.andExpect(status().isNotFound());
     }
 
     @Test

@@ -117,8 +117,15 @@ class TodoServiceTest {
     @Test
     void shouldThrowExceptionIfTodoDataToBeUpdatedInvalid() {
         Todo todoOne = new Todo(null, false);
+        todoOne.setId(0L);
         Todo todoTwo = new Todo("", false);
+        todoTwo.setId(1L);
         Todo todoThree = new Todo("     ", false);
+        todoThree.setId(2L);
+        when(todoRepository.findById(0L)).thenReturn(Optional.of(todoOne));
+        when(todoRepository.findById(1L)).thenReturn(Optional.of(todoTwo));
+        when(todoRepository.findById(2L)).thenReturn(Optional.of(todoThree));
+
 
         assertThrows(InvalidTodoException.class, () -> todoService.updateById(todoOne));
         assertThrows(InvalidTodoException.class, () -> todoService.updateById(todoTwo));

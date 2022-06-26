@@ -21,7 +21,11 @@ public class TodoService {
 
     public Todo findById(long id) throws TodoNotFoundException {
         try {
-            return todoRepository.findById(id).orElse(null);
+            Todo todo =  todoRepository.findById(id).orElse(null);
+            if(todo == null){
+                throw new TodoNotFoundException();
+            }
+            return todo;
         } catch (Exception e) {
             throw new TodoNotFoundException();
         }
