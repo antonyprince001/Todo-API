@@ -48,7 +48,7 @@ public class TodoControllerIT {
 
     @BeforeEach
     void setUp() {
-        todo = new Todo("NEEV",false);
+        todo = new Todo("NEEV", false);
         todoRepository.deleteAll();
     }
 
@@ -72,7 +72,7 @@ public class TodoControllerIT {
     public void shouldGetTodoForId() throws Exception, TodoNotFoundException {
         Todo savedTodo = todoRepository.save(todo);
 
-        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/todos/"+savedTodo.getId())
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/todos/" + savedTodo.getId())
                 .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -94,5 +94,22 @@ public class TodoControllerIT {
         result.andExpect(status().isCreated())
                 .andExpect(jsonPath("$.description").value("NEEV"))
                 .andExpect(jsonPath("$.completed").value(false));
+    }
+
+    @Test
+    void shouldUpdateATodo() throws TodoNotFoundException, InvalidTodoException, Exception {
+        Todo savedTodo = todoRepository.save(todo);
+        todo.setCompleted(true);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String todoJSON = objectMapper.writeValueAsString(todo);
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.put("/todos/"+savedTodo.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(todoJSON)
+        );
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.description").value("NEEV"))
+                .andExpect(jsonPath("$.completed").value(true));
     }
 }
