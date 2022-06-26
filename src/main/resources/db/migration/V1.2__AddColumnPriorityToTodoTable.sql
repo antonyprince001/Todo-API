@@ -1,0 +1,1 @@
+alter table todo add column priority BOOL not null default false;

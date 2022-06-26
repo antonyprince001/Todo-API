@@ -2,14 +2,11 @@ package com.tw.todo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tw.todo.entity.Todo;
-import com.tw.todo.exception.InvalidTodoException;
-import com.tw.todo.exception.TodoNotFoundException;
 import com.tw.todo.repository.TodoRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +16,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -87,7 +83,7 @@ public class TodoControllerIT {
     }
 
     @Test
-    void shouldReturnStatus404IfTodoNotFoundForId() throws Exception, TodoNotFoundException {
+    void shouldReturnStatus404IfTodoNotFoundForId() throws Exception {
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/todos/1"));
 
         result.andExpect(status().isNotFound());
@@ -109,7 +105,7 @@ public class TodoControllerIT {
     }
 
     @Test
-    void shouldNotCreateATodoIfRequestBodyInvalid() throws Exception, InvalidTodoException {
+    void shouldNotCreateATodoIfRequestBodyInvalid() throws Exception {
         Todo todo = new Todo(null, false);
         ObjectMapper objectMapper = new ObjectMapper();
         String todoJSON = objectMapper.writeValueAsString(todo);
@@ -153,13 +149,13 @@ public class TodoControllerIT {
     }
 
     @Test
-    void shouldNotUpdateATodoIfRequestBodyIsNotValid() throws  Exception {
+    void shouldNotUpdateATodoIfRequestBodyIsNotValid() throws Exception {
         todo.setDescription("   ");
         Todo savedTodo = todoRepository.save(todo);
         ObjectMapper objectMapper = new ObjectMapper();
         String bookJSON = objectMapper.writeValueAsString(todo);
 
-        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.put("/todos/"+savedTodo.getId())
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.put("/todos/" + savedTodo.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(bookJSON)
         );
@@ -175,5 +171,13 @@ public class TodoControllerIT {
                 .delete("/todos/" + savedTodo.getId()));
 
         result.andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldReturnStatus404IfTodoNotFoundForDelete() throws Exception {
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                .delete("/todos/1"));
+
+        result.andExpect(status().isNotFound());
     }
 }
