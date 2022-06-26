@@ -38,14 +38,14 @@ class TodoServiceTest {
     @BeforeEach
     void setUp() {
         id = 1L;
-        todo = new Todo("NEEV", false);
+        todo = new Todo("NEEV", false, false);
     }
 
     @Test
     void shouldGetAllTodos() {
         List<Todo> todos = new ArrayList<>();
-        todos.add(new Todo("NEEV", false));
-        todos.add(new Todo("TWARAN", true));
+        todos.add(new Todo("NEEV", false, false));
+        todos.add(new Todo("TWARAN", true, false));
         when(todoRepository.findAll()).thenReturn(todos);
 
         List<Todo> fetchedTodos = todoService.findAll();
@@ -86,9 +86,9 @@ class TodoServiceTest {
 
     @Test
     void shouldThrowExceptionIfTodoToBeSavedInvalid() {
-        Todo todoOne = new Todo(null, false);
-        Todo todoTwo = new Todo("", false);
-        Todo todoThree = new Todo("     ", false);
+        Todo todoOne = new Todo(null, false, false);
+        Todo todoTwo = new Todo("", false, false);
+        Todo todoThree = new Todo("     ", false, false);
 
         assertThrows(InvalidTodoException.class, () -> todoService.save(todoOne));
         assertThrows(InvalidTodoException.class, () -> todoService.save(todoTwo));
@@ -116,11 +116,11 @@ class TodoServiceTest {
 
     @Test
     void shouldThrowExceptionIfTodoDataToBeUpdatedInvalid() {
-        Todo todoOne = new Todo(null, false);
+        Todo todoOne = new Todo(null, false, false);
         todoOne.setId(0L);
-        Todo todoTwo = new Todo("", false);
+        Todo todoTwo = new Todo("", false, false);
         todoTwo.setId(1L);
-        Todo todoThree = new Todo("     ", false);
+        Todo todoThree = new Todo("     ", false, false);
         todoThree.setId(2L);
         when(todoRepository.findById(0L)).thenReturn(Optional.of(todoOne));
         when(todoRepository.findById(1L)).thenReturn(Optional.of(todoTwo));

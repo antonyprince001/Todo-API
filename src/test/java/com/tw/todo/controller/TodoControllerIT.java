@@ -34,7 +34,7 @@ public class TodoControllerIT {
 
     @BeforeEach
     void setUp() {
-        todo = new Todo("NEEV", false);
+        todo = new Todo("NEEV", false, false);
     }
 
     @AfterEach
@@ -44,8 +44,8 @@ public class TodoControllerIT {
 
     @Test
     public void shouldGetAllTodos() throws Exception {
-        Todo todoOne = new Todo("NEEV", false);
-        Todo todoTwo = new Todo("TWARAN", true);
+        Todo todoOne = new Todo("NEEV", false, false);
+        Todo todoTwo = new Todo("TWARAN", true, false);
         todoRepository.save(todoOne);
         todoRepository.save(todoTwo);
 
@@ -106,7 +106,7 @@ public class TodoControllerIT {
 
     @Test
     void shouldNotCreateATodoIfRequestBodyInvalid() throws Exception {
-        Todo todo = new Todo(null, false);
+        Todo todo = new Todo(null, false, false);
         ObjectMapper objectMapper = new ObjectMapper();
         String todoJSON = objectMapper.writeValueAsString(todo);
 

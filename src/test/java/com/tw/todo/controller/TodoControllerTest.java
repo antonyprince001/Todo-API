@@ -45,14 +45,14 @@ class TodoControllerTest {
     @BeforeEach
     void setUp() {
         id = 1L;
-        todo = new Todo("NEEV", false);
+        todo = new Todo("NEEV", false, false);
     }
 
     @Test
     void shouldReturnAllTodos() throws Exception {
         List<Todo> todos = new ArrayList<>();
-        todos.add(new Todo("NEEV", false));
-        todos.add(new Todo("TWARAN", true));
+        todos.add(new Todo("NEEV", false, false));
+        todos.add(new Todo("TWARAN", true, false));
         when(todoService.findAll()).thenReturn(todos);
 
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/todos")
@@ -104,7 +104,7 @@ class TodoControllerTest {
 
     @Test
     void shouldNotCreateATodoIfRequestBodyIsNotValid() throws Exception, InvalidTodoException {
-        Todo todo = new Todo(null, false);
+        Todo todo = new Todo(null, false, false);
         when(todoService.save(ArgumentMatchers.any(Todo.class))).thenThrow(new InvalidTodoException());
         ObjectMapper objectMapper = new ObjectMapper();
         String todoJSON = objectMapper.writeValueAsString(todo);
@@ -149,7 +149,7 @@ class TodoControllerTest {
 
     @Test
     void shouldNotUpdateATodoIfRequestBodyIsNotValid() throws TodoNotFoundException, InvalidTodoException, Exception {
-        Todo todo = new Todo(null, true);
+        Todo todo = new Todo(null, true,false);
         when(todoService.updateById(ArgumentMatchers.any(Todo.class))).thenThrow(new InvalidTodoException());
         ObjectMapper objectMapper = new ObjectMapper();
         String bookJSON = objectMapper.writeValueAsString(todo);

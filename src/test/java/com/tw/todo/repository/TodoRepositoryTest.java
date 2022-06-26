@@ -26,7 +26,7 @@ public class TodoRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        todo = new Todo("NEEV", false);
+        todo = new Todo("NEEV", false,false);
     }
 
     @Test
@@ -39,8 +39,8 @@ public class TodoRepositoryTest {
 
     @Test
     void shouldFetchAllTodos() {
-        Todo todoOne = new Todo("NEEV", false);
-        Todo todoTwo = new Todo("TWARAN", true);
+        Todo todoOne = new Todo("NEEV", false,false);
+        Todo todoTwo = new Todo("TWARAN", true, false);
         todoRepository.save(todoOne);
         todoRepository.save(todoTwo);
 

@@ -15,9 +15,12 @@ public class Todo {
 
     private boolean completed;
 
-    public Todo(String description, boolean completed) {
+    private boolean priority;
+
+    public Todo(String description, boolean completed ,boolean priority) {
         this.description = description;
         this.completed = completed;
+        this.priority = priority;
     }
 
     public Todo(){
