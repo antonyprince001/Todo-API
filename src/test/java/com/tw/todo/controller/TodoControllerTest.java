@@ -149,7 +149,7 @@ class TodoControllerTest {
 
     @Test
     void shouldNotUpdateATodoIfRequestBodyIsNotValid() throws TodoNotFoundException, InvalidTodoException, Exception {
-        Todo todo = new Todo(null, true,false);
+        Todo todo = new Todo(null, true, false);
         when(todoService.updateById(ArgumentMatchers.any(Todo.class))).thenThrow(new InvalidTodoException());
         ObjectMapper objectMapper = new ObjectMapper();
         String bookJSON = objectMapper.writeValueAsString(todo);

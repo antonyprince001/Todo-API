@@ -17,13 +17,13 @@ public class Todo {
 
     private boolean priority;
 
-    public Todo(String description, boolean completed ,boolean priority) {
+    public Todo(String description, boolean completed, boolean priority) {
         this.description = description;
         this.completed = completed;
         this.priority = priority;
     }
 
-    public Todo(){
+    public Todo() {
         super();
     }
 
@@ -51,4 +51,11 @@ public class Todo {
         this.completed = completed;
     }
 
+    public boolean isPriority() {
+        return priority;
+    }
+
+    public void setPriority(boolean priority) {
+        this.priority = priority;
+    }
 }

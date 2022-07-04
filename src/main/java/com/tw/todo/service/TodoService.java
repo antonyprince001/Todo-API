@@ -53,6 +53,7 @@ public class TodoService {
             Todo updatedTodo = this.findById(todo.getId());
             updatedTodo.setDescription(todo.getDescription());
             updatedTodo.setCompleted(todo.isCompleted());
+            updatedTodo.setPriority(todo.isPriority());
             return this.save(updatedTodo);
         } catch (TodoNotFoundException e) {
             throw new TodoNotFoundException();
